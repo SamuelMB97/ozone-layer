@@ -3,10 +3,9 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 
-def print_states(states):
+def print_states(states):# TODO Either adapt this or kill it
     """not fully functional yet..."""
-    state_codes_file = "state_codes.txt"
-    state_codes = pd.read_csv(state_codes_file, header=None)
+    state_codes = pd.read_csv("state_codes.txt", header=None)
     state_codes.columns = ['code', 'state']
 
     for n, state in enumerate(list(states)):
@@ -21,6 +20,7 @@ def main():
     df = pd.read_csv(file)
 
     states = df["State Name"].drop_duplicates()
+
     #print_states(states)
 
 
