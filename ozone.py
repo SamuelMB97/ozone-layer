@@ -74,8 +74,14 @@ def select_destination(): # TODO if returning Q, quit
 def plot_county_data(state, county, df, dest):
     """Takes a state and county, a dataframe, and a destination.
     Plots county data either to screen or file depending on dest."""
-    print(f"I am plotting {county} county, {state} data to {dest} from dataframe:")
-    print(df)
+    c_aqi_df = df.loc[
+        (df["State Name"].str.upper() == state.upper()) \
+            & (df["County Name"].str.upper() == county.upper())
+        ]["AQI"]
+    print(f"Plotting data for {county} county, {state} to a/the {dest} from dataframe:")
+    print(c_aqi_df)
+
+    print("Plotting time!...")
 
 
         
