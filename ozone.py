@@ -81,7 +81,24 @@ def plot_county_data(state, county, df, dest):
     print(f"Plotting data for {county} county, {state} to a/the {dest} from dataframe:")
     print(c_aqi_df)
 
+    avg_aqi = round(float(c_aqi_df.mean()), 2)
+    print(f"Average AQI: {avg_aqi}")
+    
+    color = 'green'
+    if avg_aqi > 50:
+        color = 'red'
+
     print("Plotting time!...")
+    plt.plot(c_aqi_df, color)
+    plt.title(f"AQI in {county} County, {state} (avg AQI = {avg_aqi})")
+    plt.ylabel("AQI")
+    plt.xticks([])
+
+    if dest == 'file':
+        file_name = f"AQI_for_{county}_County_{state}.png"
+        plt.savefig(file_name)
+    else:
+        plt.show()
 
 
         
