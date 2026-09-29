@@ -51,8 +51,8 @@ def select_destination(): # TODO if returning Q, quit
     while destination not in [1, 2]:
         print(
             """Choose destination for plot
-            1   Screen
-            2   File"""
+        1   Display to Screen
+        2   Save to File"""
             )
         destination = input()
         if destination.upper() == "Q":
@@ -78,28 +78,69 @@ def plot_county_data(state, county, df, dest):
         (df["State Name"].str.upper() == state.upper()) \
             & (df["County Name"].str.upper() == county.upper())
         ]["AQI"]
-    print(f"Plotting data for {county} county, {state} to a/the {dest} from dataframe:")
-    print(c_aqi_df)
+    # print(f"Plotting data for {county} county, {state} to a/the {dest} from dataframe:")
+    # print(c_aqi_df)
 
-    avg_aqi = round(float(c_aqi_df.mean()), 2)
-    print(f"Average AQI: {avg_aqi}")
+    avg_aqi = round(float(c_aqi_df.mean()))
+    # print(f"Average AQI: {avg_aqi}")
     
     color = 'green'
     if avg_aqi > 50:
         color = 'red'
 
-    print("Plotting time!...")
     plt.plot(c_aqi_df, color)
-    plt.title(f"AQI in {county} County, {state} (avg AQI = {avg_aqi})")
+    plt.title(
+        f"AQI in {county} County, {state} (avg AQI = {avg_aqi})")
     plt.ylabel("AQI")
     plt.xticks([])
 
     if dest == 'file':
-        file_name = f"AQI_for_{county}_County_{state}.png"
+        file_name = None
+        while not file_name:
+            file_name = \
+                input("Enter file with extension of jpg|png|pdf: ")
+            if file_name == "":
+                print("No file name entered. Using default...")
+                file_name = f"AQI_for_{"_".join(county.split())}_County_{"_".join(state.split())}.png"
+            elif not file_name.endswith((".jpg", ".png", ".pdf")):
+                print("Please enter valid file format.")
+                file_name = None
+
         plt.savefig(file_name)
     else:
         plt.show()
 
+    plt.clf()
+
+
+def county_loop(state_name, df):
+    county = select_county(state_name, df)
+    # print(f"County selected: {county}")
+    destination = select_destination()
+    # print(f"Destination set: {destination}")
+
+    plot_county_data(state_name, county, df, destination)
+
+
+def main_loop(states_registry, df):
+    state_name = select_state(states_registry)
+    if state_name == "Q":
+        return -1
+    # print(f"State Chosen: {state_name}")
+    
+    # county_loop(state_name, df)
+
+    same_state = "y"
+    while same_state not in ["n", "q"]:
+        if same_state == "y":
+            county_loop(state_name, df)
+        same_state = "n"
+        same_state = input(f"Enter another {state_name} county? (y/n): ").lower()
+    if same_state == "n":
+        main_loop(states_registry, df)
+    elif same_state == "q":
+        print("Quitting...")
+    
 
         
 def main():
@@ -110,16 +151,9 @@ def main():
     
     states_registry = StatesRegistry()
 
-    state_name = select_state(states_registry)
-    print(f"State Chosen: {state_name}")
+    main_loop(states_registry, df)
     
-    county = select_county(state_name, df)
-    print(f"County selected: {county}")
-    destination = select_destination()
-    print(f"Destination set: {destination}")
-
-    plot_county_data(state_name, county, df, destination)
-
+    
 
 
 
